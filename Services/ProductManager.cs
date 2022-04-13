@@ -24,7 +24,7 @@ namespace Inlamningsuppgift.Services
 
         public async Task<IActionResult> CreateProductAsync(NewProductModel newProduct)
         {
-            if (!await _context.Products.AnyAsync(x => x.ProductName == newProduct.ProductName))
+            if (!await _context.Products.AnyAsync(x => x.ProductNumber == newProduct.ProductNumber))
             {
                 var product = new Product
                 {
