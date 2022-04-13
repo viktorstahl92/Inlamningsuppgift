@@ -3,7 +3,14 @@ using Inlamningsuppgift.Data;
 
 namespace Inlamningsuppgift.Services
 {
-    public class CategoryManager
+
+    public interface ICategoryManager
+    {
+        Task<Category> GetOrCreateAsync(string categoryName);
+    }
+
+
+    public class CategoryManager : ICategoryManager
     {
         private readonly DataContext _context;
 
@@ -12,19 +19,19 @@ namespace Inlamningsuppgift.Services
             _context = context;
         }
 
-        //SKRIV OM DENNA FFS...
         public async Task<Category> GetOrCreateAsync(string categoryName)
         {
-            var category = await _context.Categories.FindAsync(categoryName);
+            var category = await _context.Categories.FirstOrDefaultAsync<Category>(x=> x.Name == categoryName);
 
-            if (category != null) return category;
-
-            category = new Category { Name = categoryName };
-
-            _context.Categories.Add(category);
+            if (category == null)
+            {
+                category = new Category { Name = categoryName };
+                _context.Categories.Add(category);
+                await _context.SaveChangesAsync();
+            }
 
             return category;
-             
+
         }
     }
 }
