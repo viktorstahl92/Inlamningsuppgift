@@ -9,7 +9,9 @@ namespace Inlamningsuppgift.Services
     public interface IProductManager
     {
         Task<IActionResult> CreateProductAsync(NewProductModel newProduct);
+        Task<ActionResult> DeleteByID(int id);
         Task<IEnumerable<ProductInfo>> GetAllAsync();
+        Task<ProductInfo?> GetByIdAsync(int id);
     }
 
     public class ProductManager : IProductManager
@@ -53,15 +55,43 @@ namespace Inlamningsuppgift.Services
                     ProductName = item.ProductName,
                     ProductNumber = item.ProductNumber,
                     ProductPrice = item.ProductPrice,
+                    ProductID = item.ProductId,
                     Category = item.Category.Name
                 });
             }
-
             return items;
         }
 
-    
-    
+        public async Task<ProductInfo?> GetByIdAsync(int id)
+        {
+            var product = await _context.Products.Include(x => x.Category).FirstOrDefaultAsync(x=> x.ProductId == id);
+
+            if (product == null) return null;
+
+            return new ProductInfo
+            {
+                Category = product.Category.Name,
+                ProductDescription = product.ProductDescription,
+                ProductName= product.ProductName,
+                ProductNumber= product.ProductNumber,
+                ProductID = product.ProductId,
+                ProductPrice = product.ProductPrice
+            };
+        }
+
+        public async Task<ActionResult> DeleteByID(int id)
+        {
+            var product = await _context.Products.FindAsync(id);
+            if (product == null)
+            {
+                return new NotFoundResult();
+            }
+
+            _context.Products.Remove(product);
+            await _context.SaveChangesAsync();
+
+            return new NoContentResult();
+        }
     }
 
 }

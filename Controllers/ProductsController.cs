@@ -22,7 +22,6 @@ namespace Inlamningsuppgift.Controllers
 
         }
 
-        // GET: api/Products
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ProductEntity>>> GetProducts()
         {
@@ -31,16 +30,16 @@ namespace Inlamningsuppgift.Controllers
 
         // GET: api/Products/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<ProductEntity>> GetProduct(int id)
+        public async Task<ActionResult<ProductInfo>> GetProduct(int id)
         {
-            var product = await _context.Products.FindAsync(id);
+            var product = await _productManager.GetByIdAsync(id);
 
             if (product == null)
             {
                 return NotFound();
             }
 
-            return product;
+            return Ok(product);
         }
 
         // PUT: api/Products/5
@@ -86,16 +85,7 @@ namespace Inlamningsuppgift.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProduct(int id)
         {
-            var product = await _context.Products.FindAsync(id);
-            if (product == null)
-            {
-                return NotFound();
-            }
-
-            _context.Products.Remove(product);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            return await _productManager.DeleteByID(id);
         }
 
         private bool ProductExists(int id)
