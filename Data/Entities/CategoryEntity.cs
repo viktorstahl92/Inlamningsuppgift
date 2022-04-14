@@ -3,12 +3,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Inlamningsuppgift.Entities
 {
-    public class Category
+    public class CategoryEntity
     {
 
-        public Category()
+        public CategoryEntity()
         {
-            Products = new List<Product>();
+            Products = new List<ProductEntity>();
         }
 
         [Key]
@@ -17,7 +17,7 @@ namespace Inlamningsuppgift.Entities
         public string Name { get; set; } = null!;
 
         [InverseProperty("Category")]
-        public virtual ICollection<Product> Products { get; set; }
+        public virtual ICollection<ProductEntity> Products { get; set; }
 
     }
 }

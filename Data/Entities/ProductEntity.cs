@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Inlamningsuppgift.Entities
 {
-    public class Product
+    public class ProductEntity
     {
         [Key]
         public int ProductId { get; set; }
@@ -24,7 +24,7 @@ namespace Inlamningsuppgift.Entities
 
         [ForeignKey("CategoryId")]
         [InverseProperty("Products")]
-        public virtual Category Category { get; set; }
+        public virtual CategoryEntity Category { get; set; }
 
     }
 }

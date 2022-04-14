@@ -6,7 +6,7 @@ namespace Inlamningsuppgift.Services
 
     public interface ICategoryManager
     {
-        Task<Category> GetOrCreateAsync(string categoryName);
+        Task<CategoryEntity> GetOrCreateAsync(string categoryName);
     }
 
 
@@ -19,13 +19,13 @@ namespace Inlamningsuppgift.Services
             _context = context;
         }
 
-        public async Task<Category> GetOrCreateAsync(string categoryName)
+        public async Task<CategoryEntity> GetOrCreateAsync(string categoryName)
         {
-            var category = await _context.Categories.FirstOrDefaultAsync<Category>(x=> x.Name == categoryName);
+            var category = await _context.Categories.FirstOrDefaultAsync<CategoryEntity>(x=> x.Name == categoryName);
 
             if (category == null)
             {
-                category = new Category { Name = categoryName };
+                category = new CategoryEntity { Name = categoryName };
                 _context.Categories.Add(category);
                 await _context.SaveChangesAsync();
             }

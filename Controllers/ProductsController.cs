@@ -24,14 +24,14 @@ namespace Inlamningsuppgift.Controllers
 
         // GET: api/Products
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
+        public async Task<ActionResult<IEnumerable<ProductEntity>>> GetProducts()
         {
-            return await _context.Products.Include(x=> x.Category).ToListAsync();
+            return new OkObjectResult(await _productManager.GetAllAsync());
         }
 
         // GET: api/Products/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Product>> GetProduct(int id)
+        public async Task<ActionResult<ProductEntity>> GetProduct(int id)
         {
             var product = await _context.Products.FindAsync(id);
 
@@ -46,7 +46,7 @@ namespace Inlamningsuppgift.Controllers
         // PUT: api/Products/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutProduct(int id, Product product)
+        public async Task<IActionResult> PutProduct(int id, ProductEntity product)
         {
             if (id != product.ProductId)
             {

@@ -9,6 +9,7 @@ namespace Inlamningsuppgift.Services
     public interface IProductManager
     {
         Task<IActionResult> CreateProductAsync(NewProductModel newProduct);
+        Task<IEnumerable<ProductInfo>> GetAllAsync();
     }
 
     public class ProductManager : IProductManager
@@ -26,7 +27,7 @@ namespace Inlamningsuppgift.Services
         {
             if (!await _context.Products.AnyAsync(x => x.ProductNumber == newProduct.ProductNumber))
             {
-                var product = new Product
+                var product = new ProductEntity
                 {
                     ProductName = newProduct.ProductName,
                     ProductDescription = newProduct.ProductDescription,
@@ -39,9 +40,28 @@ namespace Inlamningsuppgift.Services
                 return new OkResult();
             }
             return new BadRequestResult();
+        }
+    
+        public async Task<IEnumerable<ProductInfo>> GetAllAsync()
+        {
+            var items = new List<ProductInfo>();
+            foreach ( var item in await _context.Products.Include(x=>x.Category).ToListAsync())
+            {
+                items.Add(new ProductInfo
+                {
+                    ProductDescription = item.ProductDescription,
+                    ProductName = item.ProductName,
+                    ProductNumber = item.ProductNumber,
+                    ProductPrice = item.ProductPrice,
+                    Category = item.Category.Name
+                });
+            }
 
+            return items;
         }
 
-
+    
+    
     }
+
 }
