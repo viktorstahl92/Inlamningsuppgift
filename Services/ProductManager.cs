@@ -42,7 +42,7 @@ namespace Inlamningsuppgift.Services
                 await _context.SaveChangesAsync();
                 return new OkObjectResult(product);
             }
-            return new BadRequestResult();
+            return new BadRequestObjectResult("Product number already exists");
         }
 
         public async Task<IEnumerable<ProductInfo>> GetAllAsync()
@@ -87,9 +87,12 @@ namespace Inlamningsuppgift.Services
             {
                 return new NotFoundResult();
             }
+            int categoryID = product.CategoryId;
 
             _context.Products.Remove(product);
             await _context.SaveChangesAsync();
+
+            await _categoryManager.CheckIfDeleteCategory(categoryID);
 
             return new NoContentResult();
         }

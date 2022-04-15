@@ -20,7 +20,7 @@ namespace Inlamningsuppgift.Entities
         [Column(TypeName = "money")]
         public decimal ProductPrice { get; set; }
         [Column("CategoryId")]
-        public int? CategoryId { get; set; }
+        public int CategoryId { get; set; }
 
         [ForeignKey("CategoryId")]
         [InverseProperty("Products")]

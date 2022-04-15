@@ -6,6 +6,8 @@ namespace Inlamningsuppgift.Services
 
     public interface ICategoryManager
     {
+        Task CheckIfDeleteCategory(int id);
+        Task<IEnumerable<CategoryEntity>> GetAllCategories();
         Task<CategoryEntity> GetOrCreateAsync(string categoryName);
     }
 
@@ -33,5 +35,17 @@ namespace Inlamningsuppgift.Services
             return category;
 
         }
+
+        public async Task CheckIfDeleteCategory(int id)
+        {
+            var Category = await _context.Categories.Include(x=>x.Products).Where(x=> x.CategoryId == id).FirstOrDefaultAsync();
+            if (Category != null && Category.Products.Count == 0)
+            {
+                _context.Categories.Remove(Category);
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public async Task<IEnumerable<CategoryEntity>> GetAllCategories() => await _context.Categories.Include(x => x.Products).ToListAsync();
     }
 }
