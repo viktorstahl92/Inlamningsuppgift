@@ -23,74 +23,22 @@ namespace Inlamningsuppgift.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProductEntity>>> GetProducts()
-        {
-            return new OkObjectResult(await _productManager.GetAllAsync());
-        }
+        public async Task<ActionResult<IEnumerable<ProductInfo>>> GetProducts() => new OkObjectResult(await _productManager.GetAllAsync());
 
         // GET: api/Products/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<ProductInfo>> GetProduct(int id)
-        {
-            var product = await _productManager.GetByIdAsync(id);
-
-            if (product == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(product);
-        }
+        public async Task<ActionResult> GetProduct(int id) => await _productManager.GetByIdAsync(id);
 
         // PUT: api/Products/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutProduct(int id, ProductEntity product)
-        {
-            if (id != product.ProductId)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(product).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ProductExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
+        public async Task<ActionResult> PutProduct(int id, NewProductModel product) => await _productManager.UpdateAsync(id, product);
 
         // POST: api/Products
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<IActionResult> PostProduct(NewProductModel product)
-        {
-            return await _productManager.CreateProductAsync(product);
-        }
+        public async Task<IActionResult> PostProduct(NewProductModel product) => await _productManager.CreateProductAsync(product);
 
         // DELETE: api/Products/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteProduct(int id)
-        {
-            return await _productManager.DeleteByID(id);
-        }
-
-        private bool ProductExists(int id)
-        {
-            return _context.Products.Any(e => e.ProductId == id);
-        }
+        public async Task<IActionResult> DeleteProduct(int id) => await _productManager.DeleteByID(id);
     }
 }
