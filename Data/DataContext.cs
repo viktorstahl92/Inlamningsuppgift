@@ -12,8 +12,10 @@ namespace Inlamningsuppgift.Data
 
         public DbSet<ProductEntity> Products { get; set; }
         public DbSet<CategoryEntity> Categories { get; set; }
+        public DbSet<UserEntity> Users { get; set; }
 
-      
+
+
 
     }
 }

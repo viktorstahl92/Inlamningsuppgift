@@ -14,6 +14,8 @@ builder.Services.AddDbContext<DataContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("AzureDB")));
 builder.Services.AddScoped<ICategoryManager, CategoryManager>();
 builder.Services.AddScoped<IProductManager, ProductManager>();
+builder.Services.AddScoped<IAuthenticationManager, AuthenticationManager>();
+
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
