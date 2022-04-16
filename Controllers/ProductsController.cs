@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Inlamningsuppgift.Filters;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,6 +13,7 @@ namespace Inlamningsuppgift.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [UseApiKey]
+    [Authorize]
     public class ProductsController : ControllerBase
     {
         private readonly IProductManager _productManager;
