@@ -26,9 +26,6 @@ builder.Services.AddControllersWithViews()
     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
 );
 
-
-
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
