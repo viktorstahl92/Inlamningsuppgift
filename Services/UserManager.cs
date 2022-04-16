@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Inlamningsuppgift.Services
 {
-    public interface IAuthenticationManager
+    public interface IUserManager
     {
         Task<IActionResult> SignIn(SignInForm form);
         Task<IActionResult> SignUp(SignUpForm form);
@@ -14,12 +14,12 @@ namespace Inlamningsuppgift.Services
 
 
 
-    public class AuthenticationManager : IAuthenticationManager
+    public class UserManager : IUserManager
     {
         private readonly DataContext _context;
         private readonly IConfiguration _configuration;
 
-        public AuthenticationManager(DataContext context, IConfiguration configuration)
+        public UserManager(DataContext context, IConfiguration configuration)
         {
             _context = context;
             _configuration = configuration;

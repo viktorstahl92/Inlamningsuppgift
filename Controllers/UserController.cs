@@ -5,12 +5,12 @@ namespace Inlamningsuppgift.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthenticationController : ControllerBase
+    public class UserController : ControllerBase
     {
 
-        private readonly IAuthenticationManager _authenticationManager;
+        private readonly IUserManager _authenticationManager;
 
-        public AuthenticationController(IAuthenticationManager authenticationManager)
+        public UserController(IUserManager authenticationManager)
         {
             _authenticationManager = authenticationManager;
         }
