@@ -9,11 +9,11 @@ namespace Inlamningsuppgift.Controllers
     [ApiController]
     [Authorize]
 
-    public class OrderController : ControllerBase
+    public class OrdersController : ControllerBase
     {
         private readonly IOrderManager _orderManager;
 
-        public OrderController(IOrderManager orderManager)
+        public OrdersController(IOrderManager orderManager)
         {
             _orderManager = orderManager;
         }
@@ -33,10 +33,10 @@ namespace Inlamningsuppgift.Controllers
                 return new BadRequestObjectResult("User not authorized");
             }
 
-
-
-
             return await _orderManager.CreateAsync(cartItems, userEmail);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAll() => new OkObjectResult(await _orderManager.GetAllAsync());
     }
 }

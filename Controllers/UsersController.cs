@@ -18,9 +18,11 @@ namespace Inlamningsuppgift.Controllers
             _userManager = authenticationManager;
         }
 
+        [AllowAnonymous]
         [HttpPost("SignUp")]
         public async Task<IActionResult> SignUp(SignUpForm form) => await _userManager.SignUp(form);
 
+        [AllowAnonymous]
         [HttpPost("SignIn")]
         public async Task<IActionResult> SignIn(SignInForm form) => await _userManager.SignIn(form);
 

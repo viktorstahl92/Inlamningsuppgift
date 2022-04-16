@@ -5,6 +5,7 @@ namespace Inlamningsuppgift.Services
     public interface IOrderManager
     {
         Task<IActionResult> CreateAsync(List<CartItem> cartItems, string email);
+        Task<IEnumerable<OrderEntity>> GetAllAsync();
     }
 
 
@@ -58,6 +59,11 @@ namespace Inlamningsuppgift.Services
 
             return new OkObjectResult(OrderEntity);
 
+        }
+
+        public async Task<IEnumerable<OrderEntity>> GetAllAsync()
+        {
+            return await _context.Orders.Include(x => x.OrderRows).ToListAsync();
         }
     }
 }
