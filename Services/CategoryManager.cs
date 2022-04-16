@@ -1,5 +1,6 @@
 ﻿global using Inlamningsuppgift.Entities;
 using Inlamningsuppgift.Data;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Inlamningsuppgift.Services
 {
@@ -8,6 +9,7 @@ namespace Inlamningsuppgift.Services
     {
         Task CheckIfDeleteCategory(int id);
         Task<IEnumerable<CategoryEntity>> GetAllCategories();
+        Task<ActionResult> GetCategoryOnId(int id);
         Task<CategoryEntity> GetOrCreateAsync(string categoryName);
     }
 
@@ -47,5 +49,13 @@ namespace Inlamningsuppgift.Services
         }
 
         public async Task<IEnumerable<CategoryEntity>> GetAllCategories() => await _context.Categories.Include(x => x.Products).ToListAsync();
+
+        public async Task<ActionResult> GetCategoryOnId(int id)
+        {
+            var Category = await _context.Categories.Include(x => x.Products).Where(x => x.CategoryId == id).FirstOrDefaultAsync();
+            if (Category == null) return new NotFoundObjectResult("Category does not exist");
+
+            return new OkObjectResult(Category);
+        }
     }
 }

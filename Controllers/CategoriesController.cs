@@ -20,5 +20,9 @@ namespace Inlamningsuppgift.Controllers
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ProductInfo>>> GetCategories() => new OkObjectResult(await _categoryManager.GetAllCategories());
+
+        [HttpGet("{id}")]
+
+        public async Task<ActionResult<IEnumerable<ProductInfo>>> GetCategory(int id) => new(await _categoryManager.GetCategoryOnId(id));
     }
 }
