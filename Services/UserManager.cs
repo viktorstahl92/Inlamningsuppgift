@@ -9,6 +9,7 @@ namespace Inlamningsuppgift.Services
     public interface IUserManager
     {
         Task<IActionResult> DeleteUser(int userId);
+        Task<UserEntity> GetUserByEmail(string email);
         Task<IActionResult> GetUserById(int userId);
         Task<IActionResult> SignIn(SignInForm form);
         Task<IActionResult> SignUp(SignUpForm form);
@@ -127,6 +128,15 @@ namespace Inlamningsuppgift.Services
                 Email = user.Email,
                 UserId = userId,
             });
+        }
+
+
+        //TODO: Make Null Check better
+        public async Task<UserEntity> GetUserByEmail(string email)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == email);
+
+            return user;
         }
 
         public async Task<IActionResult> UpdateUser(int userId, UserInfo form)

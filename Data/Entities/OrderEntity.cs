@@ -20,9 +20,11 @@ namespace Inlamningsuppgift.Entities
         public string Address { get; set; } = null!;
 
         [Required]
+        [Column(TypeName = "date")]
         public DateTime OrderDate { get; set; }
 
         [Required]
+        [Column(TypeName = "date")]
         public DateTime DueDate { get; set; }
 
         [Required]

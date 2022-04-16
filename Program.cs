@@ -16,6 +16,8 @@ builder.Services.AddDbContext<DataContext>(options =>
 builder.Services.AddScoped<ICategoryManager, CategoryManager>();
 builder.Services.AddScoped<IProductManager, ProductManager>();
 builder.Services.AddScoped<IUserManager, UserManager>();
+builder.Services.AddScoped<IOrderManager, OrderManager>();
+
 
 
 builder.Services.AddControllers();
