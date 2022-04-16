@@ -112,7 +112,7 @@ namespace Inlamningsuppgift.Services
             productEnt.CategoryId = (await _categoryManager.GetOrCreateAsync(form.Category)).CategoryId;
 
             _context.Entry(productEnt).State = EntityState.Modified;
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return new OkObjectResult(productEnt);
         }
     }

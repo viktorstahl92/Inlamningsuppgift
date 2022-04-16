@@ -8,8 +8,11 @@ namespace Inlamningsuppgift.Services
 {
     public interface IUserManager
     {
+        Task<IActionResult> DeleteUser(int userId);
+        Task<IActionResult> GetUserById(int userId);
         Task<IActionResult> SignIn(SignInForm form);
         Task<IActionResult> SignUp(SignUpForm form);
+        Task<IActionResult> UpdateUser(int userId, UserInfo form);
     }
 
 
@@ -88,6 +91,61 @@ namespace Inlamningsuppgift.Services
             var accessToken = tokenHandler.WriteToken(tokenHandler.CreateToken(tokenDescriptor));
             return new OkObjectResult(accessToken);
 
+        }
+
+        public async Task<IActionResult> DeleteUser(int userId)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null)
+            {
+                return new NotFoundObjectResult("No user with specified User-ID found");
+            }
+
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
+
+            return new NoContentResult();
+        }
+
+        public async Task<IActionResult> GetUserById(int userId)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null)
+            {
+                return new NotFoundObjectResult("No user with specified User-ID found");
+            }
+
+            return new OkObjectResult(new UserInfo
+            {
+                Address = user.Address,
+                City = user.City,
+                PostalCode = user.PostalCode,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                UserId = userId,
+            });
+        }
+
+        public async Task<IActionResult> UpdateUser(int userId, UserInfo form)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null)
+            {
+                return new NotFoundObjectResult("No user with specified User-ID found");
+            }
+
+            user.Address = form.Address;
+            user.City = form.City;
+            user.PostalCode = form.PostalCode;
+            user.Email = form.Email;
+            user.FirstName = form.FirstName;
+            user.LastName = form.LastName;
+
+            _context.Entry(user).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+
+            return new OkObjectResult(user);
         }
     }
 }
