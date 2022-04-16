@@ -12,12 +12,10 @@ namespace Inlamningsuppgift.Controllers
     [ApiController]
     public class ProductsController : ControllerBase
     {
-        private readonly DataContext _context;
         private readonly IProductManager _productManager;
 
         public ProductsController(DataContext context, IProductManager productManager)
         {
-            _context = context;
             _productManager = productManager;
 
         }

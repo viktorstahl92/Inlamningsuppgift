@@ -8,12 +8,10 @@ namespace Inlamningsuppgift.Controllers
     public class CategoriesController : ControllerBase
     {
 
-        private readonly DataContext _context;
         private readonly ICategoryManager _categoryManager;
 
         public CategoriesController(DataContext context, ICategoryManager categoryManager)
         {
-            _context = context;
             _categoryManager = categoryManager;
         }
 
