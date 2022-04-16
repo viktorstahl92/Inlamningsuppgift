@@ -110,6 +110,8 @@ namespace Inlamningsuppgift.Services
         public async Task<IActionResult> GetUserById(int userId)
         {
             var user = await _context.Users.FindAsync(userId);
+
+
             if (user == null)
             {
                 return new NotFoundObjectResult("No user with specified User-ID found");

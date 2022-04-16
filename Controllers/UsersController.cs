@@ -1,10 +1,13 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Inlamningsuppgift.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class UsersController : ControllerBase
     {
 
@@ -25,7 +28,19 @@ namespace Inlamningsuppgift.Controllers
         public async Task<IActionResult> DeleteUser(int userID) => await _userManager.DeleteUser(userID);
 
         [HttpGet("{userID}")]
-        public async Task<IActionResult> GetUserById(int userID) => await _userManager.GetUserById(userID);
+        public async Task<IActionResult> GetUserById(int userID)
+        {
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            if (identity != null)
+            {
+                IEnumerable<Claim> claims = identity.Claims;
+                // or
+                Console.WriteLine(identity.Claims.Single(x => x.Type == ClaimTypes.Name)); 
+
+            }
+
+            return await _userManager.GetUserById(userID);
+        }
 
         [HttpPut("{userID}")]
         public async Task<IActionResult> UpdateUser(int userID, UserInfo form) => await _userManager.UpdateUser(userID, form);
