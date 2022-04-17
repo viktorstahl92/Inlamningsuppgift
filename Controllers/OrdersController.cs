@@ -38,5 +38,8 @@ namespace Inlamningsuppgift.Controllers
 
         [HttpGet]
         public async Task<IActionResult> GetAll() => new OkObjectResult(await _orderManager.GetAllAsync());
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateOrder(OrderInfoModel order, int id) => await _orderManager.UpdateAsync(order, id);
     }
 }

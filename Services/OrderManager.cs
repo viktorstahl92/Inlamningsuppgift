@@ -6,6 +6,7 @@ namespace Inlamningsuppgift.Services
     {
         Task<IActionResult> CreateAsync(List<CartItem> cartItems, string email);
         Task<IEnumerable<OrderEntity>> GetAllAsync();
+        Task<IActionResult> UpdateAsync(OrderInfoModel order, int id);
     }
 
 
@@ -23,7 +24,7 @@ namespace Inlamningsuppgift.Services
         public async Task<IActionResult> CreateAsync(List<CartItem> cartItems, string email)
         {
             if (cartItems == null || cartItems.Count == 0) return new NotFoundObjectResult("Nothing in the cart");
-            
+
             var user = await _userManager.GetUserByEmail(email);
 
             if (user == null) return new NotFoundObjectResult("User not found");
@@ -58,6 +59,61 @@ namespace Inlamningsuppgift.Services
             await _context.SaveChangesAsync();
 
             return new OkObjectResult(OrderEntity);
+
+        }
+
+        public async Task<IActionResult> UpdateAsync(OrderInfoModel order, int id)
+        {
+            if (order.OrderRows == null || order.OrderRows.Count == 0) return new NotFoundObjectResult("Nothing in the cart");
+
+            var orderEnt = await _context.Orders.Include(x => x.OrderRows).FirstOrDefaultAsync(x => x.OrderId == id);
+            if (orderEnt == null)
+            {
+                return new NotFoundObjectResult("No order found with specified ID.");
+            }
+
+
+
+            orderEnt.CustomerName = order.CustomerName;
+            orderEnt.CustomerId = order.CustomerId;
+            orderEnt.Address = order.Address;
+            orderEnt.OrderDate = order.OrderDate; //TODO: Ska man kunna ändra OrderDate i efterhand?
+            orderEnt.DueDate = order.DueDate;
+            orderEnt.OrderStatus = order.OrderStatus;
+
+
+            var OrderRows = new List<OrderRowEntity>(orderEnt.OrderRows);
+            foreach (var cartItem in order.OrderRows)
+            {
+                var orderRow = OrderRows.FirstOrDefault(x=> x.ProductNumber == cartItem.ProductNumber);
+
+                if (orderRow == null)
+                {
+                    OrderRows.Add(new OrderRowEntity
+                    {
+                        OrderId = orderEnt.OrderId,
+                        ProductNumber = cartItem.ProductNumber,
+                        ProductName = cartItem.ProductName,
+                        ProductPrice = cartItem.ProductPrice,
+                        Quantity = cartItem.Quantity
+                    });
+                }
+                else
+                {
+                    orderRow.Quantity = cartItem.Quantity;
+                    orderRow.ProductNumber = cartItem.ProductNumber;
+                    orderRow.ProductName = cartItem.ProductName;
+                    orderRow.ProductPrice = cartItem.ProductPrice;
+                    _context.Entry(orderRow).State = EntityState.Modified;
+                }
+            }
+
+            orderEnt.OrderRows = OrderRows;
+
+            _context.Entry(orderEnt).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+
+            return new OkObjectResult(orderEnt);
 
         }
 
