@@ -9,7 +9,7 @@ namespace Inlamningsuppgift.Services
     public interface IUserManager
     {
         Task<IActionResult> DeleteUser(int userId);
-        Task<UserEntity> GetUserByEmail(string email);
+        Task<UserInfo> GetUserByEmail(string email);
         Task<IActionResult> GetUserById(int userId);
         Task<IActionResult> SignIn(SignInForm form);
         Task<IActionResult> SignUp(SignUpForm form);
@@ -44,6 +44,7 @@ namespace Inlamningsuppgift.Services
                     Address = form.Address,
                     City = form.City,
                     PostalCode = form.PostalCode,
+                    Role = "Customer"
                 };
 
                 newUser.CreateSecurePassword(form.Password);
@@ -78,7 +79,8 @@ namespace Inlamningsuppgift.Services
                     new Claim(ClaimTypes.Name, userEntity.Email),
                     new Claim(ClaimTypes.Email, userEntity.Email),
                     new Claim("UserId", userEntity.UserId.ToString()),
-                    new Claim("ApiKey", _configuration.GetValue<string>("ApiKey"))
+                    new Claim("ApiKey", _configuration.GetValue<string>("ApiKey")),
+                    new Claim(ClaimTypes.Role, userEntity.Role)
                 }),
 
                 Expires = DateTime.Now.AddDays(1),
@@ -126,17 +128,28 @@ namespace Inlamningsuppgift.Services
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Email = user.Email,
+                Role = user.Role,
                 UserId = userId,
             });
         }
 
 
-        //TODO: Make Null Check better
-        public async Task<UserEntity> GetUserByEmail(string email)
+        //TODO: Make Null Check better?
+        public async Task<UserInfo> GetUserByEmail(string email)
         {
             var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == email);
 
-            return user;
+            return new UserInfo
+            {
+                Role = user.Role,
+                Address = user.Address,
+                FirstName = user.FirstName,
+                City = user.City,
+                PostalCode = user.PostalCode,
+                Email = user.Email,
+                LastName = user.LastName,
+                UserId = user.UserId
+            };
         }
 
         public async Task<IActionResult> UpdateUser(int userId, UserInfo form)
@@ -153,6 +166,7 @@ namespace Inlamningsuppgift.Services
             user.Email = form.Email;
             user.FirstName = form.FirstName;
             user.LastName = form.LastName;
+            user.Role = form.Role;
 
             _context.Entry(user).State = EntityState.Modified;
             await _context.SaveChangesAsync();

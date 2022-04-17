@@ -5,7 +5,9 @@ namespace Inlamningsuppgift.Services
     public interface IOrderManager
     {
         Task<IActionResult> CreateAsync(List<CartItem> cartItems, string email);
+        Task<IActionResult> Delete(int id);
         Task<IEnumerable<OrderEntity>> GetAllAsync();
+        Task<ActionResult> GetByIdAsync(int id);
         Task<IActionResult> UpdateAsync(OrderInfoModel order, int id);
     }
 
@@ -72,8 +74,6 @@ namespace Inlamningsuppgift.Services
                 return new NotFoundObjectResult("No order found with specified ID.");
             }
 
-
-
             orderEnt.CustomerName = order.CustomerName;
             orderEnt.CustomerId = order.CustomerId;
             orderEnt.Address = order.Address;
@@ -117,9 +117,53 @@ namespace Inlamningsuppgift.Services
 
         }
 
-        public async Task<IEnumerable<OrderEntity>> GetAllAsync()
+        public async Task<IEnumerable<OrderEntity>> GetAllAsync() => await _context.Orders.Include(x => x.OrderRows).ToListAsync();
+
+        public async Task<ActionResult> GetByIdAsync(int id)
         {
-            return await _context.Orders.Include(x => x.OrderRows).ToListAsync();
+            var order = await _context.Orders.Include(x => x.OrderRows).FirstOrDefaultAsync(x => x.OrderId == id);
+
+            if (order == null) return new NotFoundResult();
+
+            var orderInfo = new OrderInfoModel
+            {
+                Address = order.Address,
+                CustomerId = order.CustomerId,
+                CustomerName = order.CustomerName,
+                DueDate = order.DueDate,
+                OrderDate = order.OrderDate,
+                OrderStatus = order.OrderStatus,    
+               
+            };
+
+            foreach (var item in order.OrderRows)
+            {
+                var newRow = new OrderRowModel
+                {
+                    ProductName = item.ProductName,
+                    ProductNumber = item.ProductNumber,
+                    ProductPrice = item.ProductPrice,
+                    Quantity = item.Quantity
+                };
+
+                orderInfo.OrderRows.Add(newRow);
+            }
+
+
+            return new OkObjectResult(orderInfo);
+        }
+
+        public async Task<IActionResult> Delete(int id)
+        {
+            var order = await _context.Orders.Include(x=>x.OrderRows).FirstOrDefaultAsync(x=> x.OrderId == id);
+            if (order == null)
+            {
+                return new NotFoundResult();
+            }
+
+            _context.Orders.Remove(order);
+            await _context.SaveChangesAsync();
+            return new NoContentResult();
         }
     }
 }

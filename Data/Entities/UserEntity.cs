@@ -28,6 +28,8 @@ namespace Inlamningsuppgift.Entities
 
         [Required, Column(TypeName = "nvarchar(12)")]
         public string PostalCode { get; set; } = null!;
+        [Required, Column(TypeName ="nvarchar(30)")]
+        public string Role { get; set; } = null!;
 
         [Required]
         public byte[] PasswordHash { get; private set; }
