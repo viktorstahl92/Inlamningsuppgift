@@ -37,15 +37,37 @@ namespace Inlamningsuppgift.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAll() => new OkObjectResult(await _orderManager.GetAllAsync());
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetByID(int id) => await _orderManager.GetByIdAsync(id);
 
+        [HttpGet("LoggedInOrders")]
+        public async Task<IActionResult> GetLoggedInOrders()
+        {
+            int userID;
+            try
+            {
+                var identity = HttpContext.User.Identity as ClaimsIdentity;
+                userID = int.Parse(identity.FindFirst("UserId").Value);
+            }
+            catch (Exception)
+            {
+                return new BadRequestObjectResult("User not authorized");
+            }
+
+            return await _orderManager.GetByCustomerIdAsync(userID);
+
+        }
+
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateOrder(OrderInfoModel order, int id) => await _orderManager.UpdateAsync(order, id);
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteOrder(int id) => await _orderManager.Delete(id);
     }
 }

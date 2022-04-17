@@ -31,12 +31,15 @@ namespace Inlamningsuppgift.Controllers
         public async Task<ActionResult> GetProduct(int id) => await _productManager.GetByIdAsync(id);
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> PutProduct(int id, NewProductModel product) => await _productManager.UpdateAsync(id, product);
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> PostProduct(NewProductModel product) => await _productManager.CreateProductAsync(product);
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteProduct(int id) => await _productManager.DeleteByID(id);
     }
 }

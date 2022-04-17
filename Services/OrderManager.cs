@@ -7,6 +7,7 @@ namespace Inlamningsuppgift.Services
         Task<IActionResult> CreateAsync(List<CartItem> cartItems, string email);
         Task<IActionResult> Delete(int id);
         Task<IEnumerable<OrderEntity>> GetAllAsync();
+        Task<ActionResult> GetByCustomerIdAsync(int id);
         Task<ActionResult> GetByIdAsync(int id);
         Task<IActionResult> UpdateAsync(OrderInfoModel order, int id);
     }
@@ -151,6 +152,48 @@ namespace Inlamningsuppgift.Services
 
 
             return new OkObjectResult(orderInfo);
+        }
+
+        public async Task<ActionResult> GetByCustomerIdAsync(int id)
+        {
+            var orders = await _context.Orders.Include(x => x.OrderRows).Where(x => x.CustomerId == id).ToListAsync();
+
+            if (orders == null) return new NotFoundResult();
+
+            List<OrderInfoModel> ordersInfo = new List<OrderInfoModel>();   
+
+            foreach (var order in orders)
+            {
+                var orderInfo = new OrderInfoModel
+                {
+                    Address = order.Address,
+                    CustomerId = order.CustomerId,
+                    CustomerName = order.CustomerName,
+                    DueDate = order.DueDate,
+                    OrderDate = order.OrderDate,
+                    OrderStatus = order.OrderStatus,
+
+                };
+
+                foreach (var item in order.OrderRows)
+                {
+                    var newRow = new OrderRowModel
+                    {
+                        ProductName = item.ProductName,
+                        ProductNumber = item.ProductNumber,
+                        ProductPrice = item.ProductPrice,
+                        Quantity = item.Quantity
+                    };
+
+                    orderInfo.OrderRows.Add(newRow);
+                }
+
+                ordersInfo.Add(orderInfo);
+            }
+           
+
+
+            return new OkObjectResult(ordersInfo);
         }
 
         public async Task<IActionResult> Delete(int id)
