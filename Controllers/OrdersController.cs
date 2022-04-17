@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Inlamningsuppgift.Filters;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -7,6 +8,7 @@ namespace Inlamningsuppgift.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [UseApiKey]
     [Authorize]
 
     public class OrdersController : ControllerBase
