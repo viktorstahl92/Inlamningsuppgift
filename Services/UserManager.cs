@@ -11,6 +11,7 @@ namespace Inlamningsuppgift.Services
         Task<IActionResult> DeleteUser(int userId);
         Task<UserInfo> GetUserByEmail(string email);
         Task<IActionResult> GetUserById(int userId);
+        Task<IActionResult> GetUsers();
         Task<IActionResult> SignIn(SignInForm form);
         Task<IActionResult> SignUp(SignUpForm form);
         Task<IActionResult> UpdateUser(int userId, UserInfo form);
@@ -131,6 +132,29 @@ namespace Inlamningsuppgift.Services
                 Role = user.Role,
                 UserId = userId,
             });
+        }
+
+        public async Task<IActionResult> GetUsers()
+        {
+            List<UserInfo> users = new List<UserInfo>();
+
+
+            foreach (var item in await _context.Users.ToListAsync())
+            {
+                users.Add(new UserInfo
+                {
+                    Address = item.Address,
+                    City = item.City,
+                    Email = item.Email,
+                    FirstName = item.FirstName,
+                    LastName = item.LastName,
+                    Role = item.Role,
+                    PostalCode = item.PostalCode,
+                    UserId = item.UserId,
+                });
+            }
+            return new OkObjectResult(users);
+
         }
 
 

@@ -34,21 +34,13 @@ namespace Inlamningsuppgift.Controllers
 
         [HttpGet("{userID}")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> GetUserById(int userID)
-        {
-            var identity = HttpContext.User.Identity as ClaimsIdentity;
-            if (identity != null)
-            {
-                IEnumerable<Claim> claims = identity.Claims;
-                // or
-                Console.WriteLine(identity.Claims.Single(x => x.Type == ClaimTypes.Name)); 
+        public async Task<IActionResult> GetUserById(int userID) => await _userManager.GetUserById(userID);
 
-            }
-
-            return await _userManager.GetUserById(userID);
-        }
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetUsers() => await _userManager.GetUsers();
+        
         [HttpGet("LoggedInUser")]
-
         public async Task<IActionResult> GetLoggedInUser()
         {
             string userEmail = "";
