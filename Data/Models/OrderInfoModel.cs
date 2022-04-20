@@ -9,7 +9,6 @@
         public DateTime DueDate { get; set; }
         public string OrderStatus { get; set; } = null!;
         public decimal TotalPrice => OrderRows.Sum(x => x.ProductPrice * x.Quantity);
-
         public List<OrderRowModel> OrderRows { get; set; } = new();
 
     }

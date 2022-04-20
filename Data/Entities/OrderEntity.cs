@@ -30,8 +30,11 @@ namespace Inlamningsuppgift.Entities
         [Required]
         [StringLength(50)]
         public string OrderStatus { get; set; } = null!;
+        public decimal TotalPrice => OrderRows.Sum(x => x.Quantity * x.ProductPrice);
 
         public virtual ICollection<OrderRowEntity> OrderRows { get; set; } = null!;
+
+
     }
 
     public class OrderRowEntity
@@ -59,5 +62,6 @@ namespace Inlamningsuppgift.Entities
         public decimal ProductPrice { get; set; }
 
         public OrderEntity Order { get; set; } = null!;
+
     }
 }
