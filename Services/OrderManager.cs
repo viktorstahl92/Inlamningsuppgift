@@ -32,7 +32,6 @@ namespace Inlamningsuppgift.Services
 
             if (user == null) return new NotFoundObjectResult("User not found");
 
-
             var OrderEntity = new OrderEntity
             {
                 CustomerName = $"{user.FirstName} {user.LastName}",

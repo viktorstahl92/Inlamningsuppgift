@@ -60,7 +60,7 @@ namespace Inlamningsuppgift.Services
                     Category = item.Category.Name
                 });
             }
-            return items;
+            return items.OrderBy(x=> x.ProductNumber);
         }
 
         public async Task<ActionResult> GetByIdAsync(int id)
