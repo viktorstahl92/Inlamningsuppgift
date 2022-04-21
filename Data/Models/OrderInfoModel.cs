@@ -2,6 +2,7 @@
 {
     public class OrderInfoModel
     {
+        public int OrderId { get; set; }
         public int CustomerId { get; set; }
         public string CustomerName { get; set; } = null!;
         public string Address { get; set; } = null!;

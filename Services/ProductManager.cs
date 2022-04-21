@@ -105,13 +105,18 @@ namespace Inlamningsuppgift.Services
                 return new NotFoundResult();
             }
 
+            if (await _context.Products.AnyAsync(x => x.ProductNumber == form.ProductNumber)) return new BadRequestObjectResult("Artikelnumret finns redan registrerat.");
+
+
             productEnt.ProductName = form.ProductName;
             productEnt.ProductNumber = form.ProductNumber;
             productEnt.ProductDescription = form.ProductDescription;
             productEnt.ProductPrice = form.ProductPrice;
             productEnt.CategoryId = (await _categoryManager.GetOrCreateAsync(form.Category)).CategoryId;
 
-            _context.Entry(productEnt).State = EntityState.Modified;
+
+
+                _context.Entry(productEnt).State = EntityState.Modified;
             await _context.SaveChangesAsync();
             return new OkObjectResult(productEnt);
         }

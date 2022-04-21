@@ -43,8 +43,22 @@ namespace Inlamningsuppgift.Controllers
         public async Task<IActionResult> GetAll() => new OkObjectResult(await _orderManager.GetAllAsync());
 
         [HttpGet("{id}")]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> GetByID(int id) => await _orderManager.GetByIdAsync(id);
+        public async Task<IActionResult> GetByID(int id)
+        {
+            int userID;
+            try
+            {
+                var identity = HttpContext.User.Identity as ClaimsIdentity;
+                userID = int.Parse(identity.FindFirst("UserId").Value);
+                string role = identity.Claims.Single(x => x.Type == ClaimTypes.Role).Value;
+                if (role == "Admin") userID = 0; //Riktig jäkla fullösning... :D
+            }
+            catch (Exception)
+            {
+                return new BadRequestObjectResult("User not authorized");
+            }
+            return await _orderManager.GetByIdAsync(id, userID);
+        }
 
         [HttpGet("LoggedInOrders")]
         public async Task<IActionResult> GetLoggedInOrders()

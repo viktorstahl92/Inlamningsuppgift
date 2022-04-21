@@ -8,7 +8,7 @@ namespace Inlamningsuppgift.Services
         Task<IActionResult> Delete(int id);
         Task<IEnumerable<OrderEntity>> GetAllAsync();
         Task<ActionResult> GetByCustomerIdAsync(int id);
-        Task<ActionResult> GetByIdAsync(int id);
+        Task<ActionResult> GetByIdAsync(int id, int userID);
         Task<IActionResult> UpdateAsync(OrderInfoModel order, int id);
     }
 
@@ -119,11 +119,13 @@ namespace Inlamningsuppgift.Services
 
         public async Task<IEnumerable<OrderEntity>> GetAllAsync() => await _context.Orders.Include(x => x.OrderRows).ToListAsync();
 
-        public async Task<ActionResult> GetByIdAsync(int id)
+        public async Task<ActionResult> GetByIdAsync(int id, int userID)
         {
             var order = await _context.Orders.Include(x => x.OrderRows).FirstOrDefaultAsync(x => x.OrderId == id);
 
-            if (order == null) return new NotFoundResult();
+            if (order == null) return new NotFoundObjectResult("Ordern hittades ej.");
+
+            if (order.CustomerId != userID && userID != 0 ) return new UnauthorizedObjectResult("Du har inte tillgång till denna order.");
 
             var orderInfo = new OrderInfoModel
             {
@@ -165,6 +167,7 @@ namespace Inlamningsuppgift.Services
             {
                 var orderInfo = new OrderInfoModel
                 {
+                    OrderId = order.OrderId,
                     Address = order.Address,
                     CustomerId = order.CustomerId,
                     CustomerName = order.CustomerName,
