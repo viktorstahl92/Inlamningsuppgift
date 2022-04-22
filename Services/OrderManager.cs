@@ -26,11 +26,11 @@ namespace Inlamningsuppgift.Services
 
         public async Task<IActionResult> CreateAsync(List<CartItem> cartItems, string email)
         {
-            if (cartItems == null || cartItems.Count == 0) return new NotFoundObjectResult("Nothing in the cart");
+            if (cartItems == null || cartItems.Count == 0) return new NotFoundObjectResult("Varukorgen är tom.");
 
             var user = await _userManager.GetUserByEmail(email);
 
-            if (user == null) return new NotFoundObjectResult("User not found");
+            if (user == null) return new NotFoundObjectResult("Användare inte hittad.");
 
             var OrderEntity = new OrderEntity
             {
@@ -39,7 +39,7 @@ namespace Inlamningsuppgift.Services
                 Address = $"{user.Address}, {user.PostalCode} {user.City}",
                 OrderDate = DateTime.Now,
                 DueDate = DateTime.Now.AddDays(30),
-                OrderStatus = "Received"
+                OrderStatus = "Mottagen"
             };
 
             var OrderRows = new List<OrderRowEntity>();
@@ -66,12 +66,12 @@ namespace Inlamningsuppgift.Services
 
         public async Task<IActionResult> UpdateAsync(OrderInfoModel order, int id)
         {
-            if (order.OrderRows == null || order.OrderRows.Count == 0) return new NotFoundObjectResult("Nothing in the cart");
+            if (order.OrderRows == null || order.OrderRows.Count == 0) return new NotFoundObjectResult("Varukorgen är tom.");
 
             var orderEnt = await _context.Orders.Include(x => x.OrderRows).FirstOrDefaultAsync(x => x.OrderId == id);
             if (orderEnt == null)
             {
-                return new NotFoundObjectResult("No order found with specified ID.");
+                return new NotFoundObjectResult("Ingen order hittat med specificerat order-ID.");
             }
 
             orderEnt.CustomerName = order.CustomerName;
@@ -85,7 +85,7 @@ namespace Inlamningsuppgift.Services
             var OrderRows = new List<OrderRowEntity>(orderEnt.OrderRows);
             foreach (var cartItem in order.OrderRows)
             {
-                var orderRow = OrderRows.FirstOrDefault(x=> x.ProductNumber == cartItem.ProductNumber);
+                var orderRow = OrderRows.FirstOrDefault(x => x.ProductNumber == cartItem.ProductNumber);
 
                 if (orderRow == null)
                 {
@@ -125,7 +125,7 @@ namespace Inlamningsuppgift.Services
 
             if (order == null) return new NotFoundObjectResult("Ordern hittades ej.");
 
-            if (order.CustomerId != userID && userID != 0 ) return new UnauthorizedObjectResult("Du har inte tillgång till denna order.");
+            if (order.CustomerId != userID && userID != 0) return new UnauthorizedObjectResult("Du har inte tillgång till denna order.");
 
             var orderInfo = new OrderInfoModel
             {
@@ -134,8 +134,8 @@ namespace Inlamningsuppgift.Services
                 CustomerName = order.CustomerName,
                 DueDate = order.DueDate,
                 OrderDate = order.OrderDate,
-                OrderStatus = order.OrderStatus,    
-               
+                OrderStatus = order.OrderStatus,
+                OrderId = order.OrderId
             };
 
             foreach (var item in order.OrderRows)
@@ -161,7 +161,7 @@ namespace Inlamningsuppgift.Services
 
             if (orders == null) return new NotFoundResult();
 
-            List<OrderInfoModel> ordersInfo = new List<OrderInfoModel>();   
+            List<OrderInfoModel> ordersInfo = new List<OrderInfoModel>();
 
             foreach (var order in orders)
             {
@@ -192,7 +192,7 @@ namespace Inlamningsuppgift.Services
 
                 ordersInfo.Add(orderInfo);
             }
-           
+
 
 
             return new OkObjectResult(ordersInfo);
@@ -200,7 +200,7 @@ namespace Inlamningsuppgift.Services
 
         public async Task<IActionResult> Delete(int id)
         {
-            var order = await _context.Orders.Include(x=>x.OrderRows).FirstOrDefaultAsync(x=> x.OrderId == id);
+            var order = await _context.Orders.Include(x => x.OrderRows).FirstOrDefaultAsync(x => x.OrderId == id);
             if (order == null)
             {
                 return new NotFoundResult();
