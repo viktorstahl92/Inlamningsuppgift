@@ -35,7 +35,7 @@ namespace Inlamningsuppgift.Services
             try
             {
                 if (await _context.Users.AnyAsync(x => x.Email == form.Email))
-                    return new ConflictObjectResult("A user with the same E-Mail already exists.");
+                    return new ConflictObjectResult("En användare med din angivna e-mail finns redan registrerad.");
 
                 var newUser = new UserEntity
                 {
@@ -52,7 +52,7 @@ namespace Inlamningsuppgift.Services
                 _context.Users.Add(newUser);
                 await _context.SaveChangesAsync();
 
-                return new OkObjectResult($"{newUser.FirstName} {newUser.LastName} created successfully.");
+                return new OkObjectResult($"{newUser.FirstName} {newUser.LastName} registrerad.");
 
             }
             catch (Exception)
@@ -63,14 +63,14 @@ namespace Inlamningsuppgift.Services
 
         public async Task<IActionResult> SignIn (SignInForm form)
         {
-            if (string.IsNullOrEmpty(form.Email) || string.IsNullOrEmpty(form.Password)) return new BadRequestObjectResult("You must provide Email and Password.");
+            if (string.IsNullOrEmpty(form.Email) || string.IsNullOrEmpty(form.Password)) return new BadRequestObjectResult("Du måste ange email och lösenord.");
 
             var userEntity = await _context.Users.FirstOrDefaultAsync(x => x.Email == form.Email);
             if (userEntity == null)
-                return new BadRequestObjectResult("Incorrect email or password");
+                return new BadRequestObjectResult("Felaktigt mail eller lösenord.");
 
             if (!userEntity.CompareSecurePassword(form.Password))
-                return new BadRequestObjectResult("Incorrect email or password");
+                return new BadRequestObjectResult("Felaktigt mail eller lösenord.");
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var tokenDescriptor = new SecurityTokenDescriptor
@@ -102,7 +102,7 @@ namespace Inlamningsuppgift.Services
             var user = await _context.Users.FindAsync(userId);
             if (user == null)
             {
-                return new NotFoundObjectResult("No user with specified User-ID found");
+                return new NotFoundObjectResult("Ingen användare med angivet användar-ID hittat.");
             }
 
             _context.Users.Remove(user);
@@ -118,7 +118,7 @@ namespace Inlamningsuppgift.Services
 
             if (user == null)
             {
-                return new NotFoundObjectResult("No user with specified User-ID found");
+                return new NotFoundObjectResult("Ingen användare med angivet användar-ID hittat.");
             }
 
             return new OkObjectResult(new UserInfo
@@ -181,7 +181,7 @@ namespace Inlamningsuppgift.Services
             var user = await _context.Users.FindAsync(userId);
             if (user == null)
             {
-                return new NotFoundObjectResult("No user with specified User-ID found");
+                return new NotFoundObjectResult("Ingen användare med angivet användar-ID hittat.");
             }
 
             user.Address = form.Address;
