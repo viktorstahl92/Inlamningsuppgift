@@ -105,6 +105,7 @@ namespace Inlamningsuppgift.Services
                     orderRow.ProductName = cartItem.ProductName;
                     orderRow.ProductPrice = cartItem.ProductPrice;
                     _context.Entry(orderRow).State = EntityState.Modified;
+                    if (orderRow.Quantity < 1) _context.OrderRows.Remove(orderRow);
                 }
             }
 
