@@ -60,7 +60,7 @@ namespace Inlamningsuppgift.Services
                     Category = item.Category.Name
                 });
             }
-            return items.OrderBy(x=> x.ProductNumber);
+            return items.OrderBy(x => x.ProductNumber);
         }
 
         public async Task<ActionResult> GetByIdAsync(int id)
@@ -105,7 +105,8 @@ namespace Inlamningsuppgift.Services
                 return new NotFoundResult();
             }
 
-            if (await _context.Products.AnyAsync(x => x.ProductNumber == form.ProductNumber)) return new BadRequestObjectResult("Artikelnumret finns redan registrerat.");
+            if (form.ProductNumber != productEnt.ProductNumber)
+                if (await _context.Products.AnyAsync(x => x.ProductNumber == form.ProductNumber)) return new BadRequestObjectResult("Artikelnumret finns redan registrerat.");
 
 
             productEnt.ProductName = form.ProductName;
@@ -116,7 +117,7 @@ namespace Inlamningsuppgift.Services
 
 
 
-                _context.Entry(productEnt).State = EntityState.Modified;
+            _context.Entry(productEnt).State = EntityState.Modified;
             await _context.SaveChangesAsync();
             return new OkObjectResult(productEnt);
         }

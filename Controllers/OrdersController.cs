@@ -51,7 +51,7 @@ namespace Inlamningsuppgift.Controllers
                 var identity = HttpContext.User.Identity as ClaimsIdentity;
                 userID = int.Parse(identity.FindFirst("UserId").Value);
                 string role = identity.Claims.Single(x => x.Type == ClaimTypes.Role).Value;
-                if (role == "Admin") userID = 0; //Riktig jäkla fullösning... :D
+                if (role == "Admin") userID = 0; //Riktig jäkla lathetsfullösning... :D
             }
             catch (Exception)
             {
